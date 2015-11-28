@@ -2,12 +2,12 @@
 
 Fun and simple to setup WhatsApp chatbot!
 
-How to run:
+How to run:  
 
-   git clone https://github.com/TeamFreeHugs/Whatsapp-Chatbot.git
-   cd Whatsapp-Chatbot
-   npm install -d
-   node bin/www
+    git clone https://github.com/TeamFreeHugs/Whatsapp-Chatbot.git
+    cd Whatsapp-Chatbot
+    npm install -d
+    node bin/www
    
 That loads up the getaround for CSP. Now for the chatbot itself:
 
