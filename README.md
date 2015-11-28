@@ -48,3 +48,5 @@ An example:
             console.log(data);
         }
     });
+    
+And you can see the contents of `example.com`!

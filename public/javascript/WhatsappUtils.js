@@ -2,7 +2,8 @@ window.whatsappUtils = {
     corsWindow: undefined,
     jQueryInit: false,
     whatsappAPIInit: false,
-    lastReqID: 0
+    lastReqID: 0,
+    requestSomethingCB: []
 };
 
 function loadjQuery() {
@@ -26,7 +27,7 @@ function requestSomething(settings) {
         callback = settings.callback,
         method = settings.method || 'get';
     loadWhatsappUtils();
-    window.requestSomethingCB.push(callback);
+    whatsappUtils.requestSomethingCB.push(callback);
     whatsappUtils.corsWindow.postMessage(JSON.stringify({
         requestType: 1,
         requestURL: url,
@@ -55,15 +56,11 @@ setTimeout(function () {
     });
 }, 3000);
 
-window.requestSomethingCB = [];
-
 
 addEventListener('message', function (e) {
     try {
         var data = JSON.parse(e.data);
-        console.log(data);
-        window.data = data;
-        requestSomethingCB[parseInt(data.id)](data.response);
+        whatsappUtils.requestSomethingCB[parseInt(data.id)](data.response);
     } catch (e1) {
         console.log(e1);
     }
