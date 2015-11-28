@@ -52,7 +52,7 @@ setTimeout(function () {
         callback: function (e) {
             window.initWhatsappAPI = window.eval('function getInit(){' + e + '\nreturn init;}; getInit();');
         }
-    })
+    });
 }, 3000);
 
 window.requestSomethingCB = [];
@@ -67,7 +67,6 @@ addEventListener('message', function (e) {
     } catch (e1) {
         console.log(e1);
     }
-    //window.requestSomethingCB.splice(0, 1);
 });
 
 
