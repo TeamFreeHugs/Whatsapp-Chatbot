@@ -1,0 +1,22 @@
+extends layout
+
+block content
+
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js')
+    script.
+        addEventListener('message', function (e) {
+            var req = JSON.parse(e.data);
+            console.log(req);
+            if (req.requestType === 1) {
+                $.ajax({
+                    type: 'GET',
+                    url: '/getUrl?reqURL=' + req.requestURL + (typeof req.method === 'undefined' ? '' : '&method=' + req.method) + '&lastID=' + req.lastReqID
+                }).done(function (data) {
+                    data = JSON.parse(data);
+                    opener.postMessage(JSON.stringify({
+                        response: data.response,
+                        id: data.id
+                    }), '*');
+                });
+            }
+        })
