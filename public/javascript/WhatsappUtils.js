@@ -14,7 +14,7 @@ function loadjQuery() {
         whatsappUtils.jQueryInit = true;
     }
 }
-function loadWhatsappUtils() {
+function loadCORSWindow() {
     if (!whatsappUtils.corsWindow) {
         whatsappUtils.corsWindow = window.open('http://localhost:3000/', '_blank', 'width=100,height=100');
         whatsappUtils.corsWindow.blur();
@@ -22,11 +22,20 @@ function loadWhatsappUtils() {
     }
 }
 
+function loadWhatsappAPI() {
+    requestSomething({
+        url: 'http://localhost:3000/javascript/WhatsappAPI.js',
+        callback: function (e) {
+            window.initWhatsappAPI = window.eval('function getInit(){' + e + '\nreturn init;}; getInit();');
+        }
+    });
+}
+
 function requestSomething(settings) {
     var url = settings.url,
         callback = settings.callback,
         method = settings.method || 'get';
-    loadWhatsappUtils();
+    loadCORSWindow();
     whatsappUtils.requestSomethingCB.push(callback);
     whatsappUtils.corsWindow.postMessage(JSON.stringify({
         requestType: 1,
@@ -36,10 +45,9 @@ function requestSomething(settings) {
     }), '*');
     whatsappUtils.lastReqID++;
 }
-
 loadjQuery();
-loadWhatsappUtils();
 
+loadCORSWindow();
 setTimeout(function () {
     requestSomething({
         url: 'http://teamfreehugs.github.io/js/URI.js',
@@ -48,12 +56,7 @@ setTimeout(function () {
         },
         method: 'get'
     });
-    requestSomething({
-        url: 'http://localhost:3000/javascript/WhatsappAPI.js',
-        callback: function (e) {
-            window.initWhatsappAPI = window.eval('function getInit(){' + e + '\nreturn init;}; getInit();');
-        }
-    });
+    loadWhatsappAPI();
 }, 3000);
 
 
