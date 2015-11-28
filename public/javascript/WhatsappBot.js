@@ -34,7 +34,7 @@ $(document).ready(function () {
     if (typeof whatsapp !== 'undefined')
         delete whatsapp;
 
-    window.whatsapp = init();
+    window.whatsapp = initWhatsappAPI();
 
     whatsapp.attachHandler({
         newMessage: function (text) {
