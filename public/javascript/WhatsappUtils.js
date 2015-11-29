@@ -23,7 +23,7 @@ function loadCORSWindow() {
 }
 
 function loadWhatsappAPI() {
-    whatsappUtils.  requestSomething({
+    whatsappUtils.requestSomething({
         url: 'http://localhost:3000/javascript/WhatsappAPI.js',
         callback: function (e) {
             window.initWhatsappAPI = window.eval('function getInit(){' + e + '\nreturn init;}; getInit();');

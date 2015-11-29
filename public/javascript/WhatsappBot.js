@@ -303,6 +303,40 @@ handlers.randColor = function () {
     }
 };
 
+handlers.splitRegex = function (args) {
+    var parts = args.split(/\/(.+)\/(g?m?i?) (".*")/).filter(function (e) {
+        return !!e
+    });
+    if (parts.length === 0) {
+        whatsapp.sendMessage('No match!');
+        return;
+    }
+    if (!parts[parts.length - 1]) {
+        whatsapp.sendMessage('No match!');
+        return;
+    }
+    var regex;
+    try {
+        new RegExp(parts[0]);
+    } catch (e) {
+        whatsapp.sendMessage('Invalid regex!');
+        return;
+    }
+    if (parts.length === 3)
+        regex = new RegExp(parts[0], parts[1]);
+    else
+        regex = new RegExp(parts[0]);
+    var test = parts[parts.length - 1].replace(/^"(.*)"$/, '$1');
+    var regexParts = test.split(regex).filter(function (e) {
+        return !!e
+    });
+    console.log(regexParts);
+    if (!regexParts)
+        whatsapp.sendMessage('No match!');
+    else
+        whatsapp.sendMessage(regexParts.join(', '));
+};
+
 if (!whatsapp.isWatching)
     whatsapp.startWatching();
 
