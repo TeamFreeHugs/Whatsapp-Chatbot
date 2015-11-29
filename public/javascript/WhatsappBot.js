@@ -141,8 +141,12 @@ handlers.quote = function () {
     whatsapp.sendMessage(quote)
 };
 
-handlers.alive = function () {
-    whatsapp.sendMessage(aliveMessages[randNum(0, aliveMessages.length - 1)]);
+handlers.alive = function (a, b, c) {
+    var usersWithoutPhoneNumber = whatsapp.getAllUsers().filter(function (e) {
+        return e.match(/[89]\d{3} ?\d{4}/);
+    });
+    usersWithoutPhoneNumber.push(whatsapp.getCurrentUser().trim());
+    whatsapp.sendMessage(aliveMessages[randNum(0, aliveMessages.length - 1)].replace(/\$1/, usersWithoutPhoneNumber[randNum(0, usersWithoutPhoneNumber.length - 1)]));
 };
 
 handlers.facepalm = function () {
@@ -263,6 +267,39 @@ handlers.hug = function (args, isIn, sender) {
         whatsapp.sendMessage('Hugs ' + sender);
     } else {
         whatsapp.sendMessage('Hugs ' + args);
+    }
+};
+
+var colorPickerDoc = null;
+
+handlers.randColor = function () {
+    function getColor() {
+        var c = colorPickerDoc.querySelectorAll('body > table:nth-child(4) > tbody:nth-child(1) > tr:nth-child(2) > td:nth-child(1) > table:nth-child(1) > tbody:nth-child(1) > tr');
+        c.forEach = Array.prototype.forEach;
+        var colors = [];
+        c.forEach(function (e) {
+            colors.push(e);
+        });
+        colors.splice(0, 1);
+        var message = 'Random color:\nName: ';
+        var colorNode = colors[randNum(0, colors.length - 1)];
+        message += colorNode.childNodes[1].textContent;
+        message += '\nHex Color: ';
+        message += colorNode.childNodes[2].textContent;
+        console.log(message);
+        whatsapp.sendMessage(message);
+    }
+
+    if (!colorPickerDoc)
+        whatsappUtils.requestSomething({
+            url: 'http://www.colorpicker.com/color-chart/',
+            callback: function (data) {
+                colorPickerDoc = new DOMParser().parseFromString(data, 'text/html');
+                getColor();
+            }
+        });
+    else {
+        getColor();
     }
 };
 

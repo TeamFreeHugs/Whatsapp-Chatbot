@@ -23,7 +23,7 @@ function loadCORSWindow() {
 }
 
 function loadWhatsappAPI() {
-    requestSomething({
+    whatsappUtils.  requestSomething({
         url: 'http://localhost:3000/javascript/WhatsappAPI.js',
         callback: function (e) {
             window.initWhatsappAPI = window.eval('function getInit(){' + e + '\nreturn init;}; getInit();');
@@ -31,7 +31,7 @@ function loadWhatsappAPI() {
     });
 }
 
-function requestSomething(settings) {
+whatsappUtils.requestSomething = function (settings) {
     var url = settings.url,
         callback = settings.callback,
         method = settings.method || 'get';
@@ -44,12 +44,12 @@ function requestSomething(settings) {
         lastReqID: whatsappUtils.lastReqID
     }), '*');
     whatsappUtils.lastReqID++;
-}
+};
 loadjQuery();
 
 loadCORSWindow();
 setTimeout(function () {
-    requestSomething({
+    whatsappUtils.requestSomething({
         url: 'http://teamfreehugs.github.io/js/URI.js',
         callback: function (e) {
             window.URI = window.eval('function getURI(){' + e + '\nreturn URI;}; getURI();');
