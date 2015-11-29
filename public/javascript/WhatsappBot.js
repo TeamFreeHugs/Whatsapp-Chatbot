@@ -10,6 +10,8 @@ var lickingWords = ['happily', 'sadly', 'madly', 'crazily', 'like a mad dog'];
 
 var aliveMessages = ['Duh', 'Of course', 'Wat du u think?', 'Mmmm', 'Punches $1', 'what u want', 'its okay'];
 
+var quoterNames = ['Isaac\'s Mom', 'Jaimmie', 'Isaac'];
+
 var quotes = {
     'Isaac\'s Mom': ['its okay', 'what u want', 'is this a joke', 'no lol', 'LOL NO'],
     'Jaimmie': ['Hi doggie', 'Lol ok?', 'Bruh, nice imagination', 'But theres no axe on my head?', 'Lol k', 'Woof woof'],
@@ -30,6 +32,91 @@ var foodTypes = ['\ud83c\udf82', '\ud83c\udf5c', '\ud83c\udf72', '\ud83c\udf73',
 
 var handlers = {};
 
+var helpTexts = {
+    lick: {
+        short: 'Lick the floor',
+        long: 'Licks the floor.\n Syntax: "..lick"'
+    }, echo: {
+        short: 'Echos args',
+        long: 'Echos back the provided arguments.\n Syntax: "..echo to echo"'
+    }, kill: {
+        short: 'Kills someone',
+        long: 'Kills someone in a few fun ways.\n Syntax: "..kill somenoe"'
+    }, randRange: {
+        short: 'Random number in a range',
+        long: 'Generates a random number in the provided range.\n Syntax: "..randRange start end"'
+    }, help: {
+        short: 'Um duh',
+        long: 'You still don\'t get the help command? *Sigh*\n Syntax: "..help some_command long|short"'
+    }, eval: {
+        short: 'Evaluates something in JavaScript',
+        long: 'Evaluates something in JavaScript, using a masked eval call.\n Syntax: "..eval something"'
+    }, wat: {
+        short: 'Quotes something from Isaac\'s mom.',
+        long: 'Really you don\'t get it? Syntax: "..wat"'
+    }, wut: {
+        short: 'Same as wat',
+        long: 'Still same as wat.\n Syntax: "..wut"'
+    }, coffee: {
+        short: 'Brews coffee',
+        long: 'Free cup of coffee for you\n Syntax: "..coffee"'
+    }, quote: {
+        short: 'Quotes something from some random people',
+        long: 'Picks a random quote from one of this people: ' + quoterNames.slice(0, quoterNames.length - 1).join(', ') + ' or ' + quoterNames[quoterNames.length - 1] + '\n Syntax: "..quote"'
+    }, alive: {
+        short: 'Alive?',
+        long: 'Checks if bot is alive.\n Syntax: "..alive"'
+    }, beer: {
+        short: 'Beer',
+        long: 'Brews a mug of beer for you.\n Syntax: "..beer"'
+    }, blame: {
+        short: 'Blames someone',
+        long: 'Someone broke your coffee machine, I heard.\n Syntax: "..blame"'
+    }, cook: {
+        short: 'Cooks food with person',
+        long: 'Cooks the thing provided with some random foods.\n Syntax: "..cook something"'
+    }, emoji: {
+        short: 'Random emoji from a list',
+        long: 'Random emoji from a list\n Syntax: "..emoji"'
+    }, '.emoji': {
+        short: 'Moar random emoji',
+        long: 'But this time, it\'s from all the whatsapp emojis.\n Syntax: "...emoji"'
+    }, facepalm: {
+        short: 'Facepalm',
+        long: '*Facepalm* YOU DON\'T GET ME???????\n Syntax: "..facepalm"'
+    }, hug: {
+        short: 'Hugs',
+        long: 'Moar free hugz\n Syntax: "..hug someone"'
+    }, numberRange: {
+        short: 'Numbers in a range.',
+        long: 'Numbers in the provided range, in a nice list.\n Syntax: "..numberRange start end"'
+    }, polish: {
+        short: 'Polishes something belonging to you',
+        long: 'Still polishes something belonging to you.\n Syntax: "..polish something"'
+    }, randColor: {
+        short: 'Random nice color',
+        long: 'Random nice color from "http://www.colorpicker.com/color-chart/".\n Syntax: "..randColor"\n Do note that on first run, it may be a bit slow.'
+    }, randbool: {
+        short: 'Random boolean',
+        long: 'Can\'t choose if to kill ex-gf (Or enemy) or not? Use this!\n Syntax: "..randbool"'
+    }, splitRegex: {
+        short: 'Splits a regex and a string',
+        long: 'Splits a regex and a string. Regex or string may not be longer than 100 chars.\n Syntax: \'..splitRegex /regexp/ "test string"\''
+    }, stare: {
+        short: 'Staring emoji',
+        long: 'Stares at group forever.\n Syntax: "..stare"'
+    }, tea: {
+        short: 'Brews tea for you',
+        long: 'However, only ingredients are provided!\n Syntax: "..tea"'
+    }, '.polish': {
+        short: 'Polishes something',
+        long: 'Polishes something. Anything.\n Syntax: "...polish something"'
+    }, commands: {
+        short: 'All command',
+        long: 'Lists all commands.\n Syntax: "..commands"'
+    }
+};
+
 if (typeof whatsapp !== 'undefined')
     delete whatsapp;
 
@@ -43,7 +130,12 @@ whatsapp.attachHandler({
             var args = text.substr(3 + command.length);
             var handler = handlers[command];
             if (typeof handler === 'function') {
-                handler(args);
+                try {
+                    handler(args);
+                } catch (e) {
+                    whatsapp.sendMessage('500 Internal Server Error; An error occurred while processing the command');
+                    console.log(e);
+                }
             } else {
                 whatsapp.sendMessage('Command "' + command + '" is unknown. ', true);
             }
@@ -86,8 +178,30 @@ handlers.randRange = function (args) {
     whatsapp.sendMessage(randNum(min, max));
 };
 
-handlers.help = function () {
-    whatsapp.sendMessage('Hi. I\'m Uni*\'s chatbot, ported to whatsapp, writted in JS.', true);
+handlers.help = function (args) {
+    if (!args.trim()) {
+        whatsapp.sendMessage('Hi. I\'m Uni*\'s chatbot, ported to whatsapp, writted in JS.', true);
+        return;
+    }
+    var parts = args.split(' ');
+    if (parts.length === 1) {
+        parts[1] = 'short';
+    }
+
+    if (!parts[1]) {
+        parts[1] = 'short';
+    }
+    parts[0] = parts[0].toLowerCase();
+    parts[1] = parts[1].toLowerCase();
+    if (parts[1] !== 'short' && parts[1] !== 'long') {
+        parts[1] = 'short';
+    }
+
+    if (!helpTexts[parts[0]])
+        whatsapp.sendMessage('No help entry found for "' + parts[0] + '"');
+    else {
+        whatsapp.sendMessage(helpTexts[parts[0]][parts[1]]);
+    }
 };
 
 handlers.eval = function (args) {
@@ -344,6 +458,20 @@ handlers.splitRegex = function (args) {
         whatsapp.sendMessage('No match!');
     else
         whatsapp.sendMessage(regexParts.join(', '));
+};
+
+handlers.commands = function () {
+    var msg = 'Commands: "';
+    var commands = [];
+    for (var c in handlers) {
+        if (handlers.hasOwnProperty(c)) {
+            commands.push(c);
+        }
+    }
+    commands.sort();
+    msg += commands.join('", "') + '"\n\n';
+    msg += 'Use "..help command long|short" to find out more about a command.';
+    whatsapp.sendMessage(msg);
 };
 
 if (!whatsapp.isWatching)
