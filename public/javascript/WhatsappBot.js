@@ -315,6 +315,16 @@ handlers.splitRegex = function (args) {
         whatsapp.sendMessage('No match!');
         return;
     }
+    var test = parts[parts.length - 1].replace(/^"(.*)"$/, '$1');
+    if (parts[0].length > 100) {
+        whatsapp.sendMessage('Test string is too long!');
+        return;
+    }
+    if (parts[0].length > 100) {
+        whatsapp.sendMessage('Regex is too long!');
+        return;
+    }
+
     var regex;
     try {
         new RegExp(parts[0]);
@@ -326,7 +336,6 @@ handlers.splitRegex = function (args) {
         regex = new RegExp(parts[0], parts[1]);
     else
         regex = new RegExp(parts[0]);
-    var test = parts[parts.length - 1].replace(/^"(.*)"$/, '$1');
     var regexParts = test.split(regex).filter(function (e) {
         return !!e
     });
